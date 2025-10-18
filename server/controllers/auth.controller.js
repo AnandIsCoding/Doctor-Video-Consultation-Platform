@@ -95,7 +95,7 @@ export const loginDoctor = async (req, res) => {
     });
     return res
       .status(StatusCodes.OK)
-      .json({ message: "Login successful", token });
+      .json({ message: "Doctor Login successful", token });
   } catch (error) {
     console.log(chalk.red("Error in loginDoctor controller", error));
     return res

@@ -80,7 +80,7 @@ const Header: React.FC<HeaderProp> = ({ showDashboardNav }) => {
               <Stethoscope className="h-5 w-5 text-white" />
             </div>
             <div className="text-2xl font-bold  bg-gradient-to-br from-blue-800 to-blue-700 bg-clip-text text-transparent ">
-              Healthcare+
+              eDoc+
             </div>
           </Link>
 

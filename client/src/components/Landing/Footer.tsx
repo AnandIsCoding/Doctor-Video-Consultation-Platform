@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
         {/* Dynamic Footer Sections */}
         {footerSections.map((section) => (
           <div key={section.title}>
-            <p className="text-lg text-gray-800 font-semibold mb-3">
+            <p className="text-sm text-gray-800 font-semibold mb-3">
               {section.title}
             </p>
             <ul className="flex flex-col gap-2 text-sm">

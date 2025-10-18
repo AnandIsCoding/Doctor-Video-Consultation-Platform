@@ -12,6 +12,8 @@ import authRouter from './routes/auth.route.js';
 import patientRouter from './routes/patient.route.js';
 import doctorRoute from './routes/doctor.route.js';
 
+import passport from 'passport';
+
 const app = express()
 
 app.use(helmet())
@@ -48,6 +50,9 @@ connectToDb()
     );
     process.exit(1); // exit the process with an error status code 1
   });
+
+  // initialize passport
+app.use(passport.initialize())
 
 // route handlers
 app.use('/api/auth', authRouter)

@@ -1,39 +1,137 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
+import axios from "axios";
 
-function page() {
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+const metadata = {
+  title: "Doctor Login - eDoc+",
+  description:
+    "Healthcare provider sign in to MediCare+ platform. Manage your practice and consultations.",
+};
+
+type ToastVariant = "default" | "destructive" | null | undefined;
+
+export default function Page() {
   const [isSignup, setIsSignup] = useState(true);
   const [showPassword, setShowpassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  //   login handler
-  const handleLogin = async () => {
+  const [toastType, setToastType] = useState<ToastVariant>(null);
+  const [responseMessage, setResponseMessage] = useState<string>("");
+
+  // 🕒 Auto-hide alert after 3 seconds
+  useEffect(() => {
+    if (toastType) {
+      const timer = setTimeout(() => {
+        setToastType(null);
+        setResponseMessage("");
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastType]);
+
+  const alert = toastType ? (
+    <Alert
+      variant={toastType ?? "default"}
+      className={`absolute top-4 left-1/2 -translate-x-1/2 w-full px-6  md:mx-8 md:w-fit ${toastType === 'destructive' ? 'bg-red-200' : 'bg-green-300 text-black'} z-50`}
+    >
+      <Terminal />
+      <AlertTitle>
+        {toastType === "destructive" ? "Error!" : "Success"}
+      </AlertTitle>
+      <AlertDescription>{responseMessage}</AlertDescription>
+    </Alert>
+  ) : null;
+
+  // 🧑‍⚕️ Login handler
+  const handleLogin = async (e:any) => {
     console.log("Doctor login");
+    // Implement login logic
+     e.preventDefault();
+
+    try {
+      setResponseMessage("");
+      setLoading(true);
+
+      const res = await axios.post(`${BASE_URL}/auth/doctor/login`, {
+        email,
+        password,
+      }, {withCredentials:true});
+
+      const data = res.data;
+
+      console.log(data)
+
+      if (data.message === "Doctor Login successful") {
+        setToastType("default");
+        setResponseMessage(data?.message || "Doctor Login successful");
+        console.log("Doctor Login successful : --> ", data);
+      }
+    } catch (error: any) {
+      console.log("Error in sign in --> ", error);
+      setToastType("destructive");
+      setResponseMessage(error.response?.data?.message || error.message || 'SOmething went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
-  // handle signup
-  const handleSignup = async () => {
-    console.log(" Doctor Signup");
-    console.log(name, email, password);
+
+  // 🩺 Signup handler
+  const handleSignup = async (e: any) => {
+    e.preventDefault();
+    console.log("Doctor Signup");
+
+    try {
+      setResponseMessage("");
+      setLoading(true);
+
+      const res = await axios.post(`${BASE_URL}/auth/doctor/register`, {
+        name,
+        email,
+        password,
+      }, {withCredentials:true});
+
+      const data = res.data;
+
+      console.log(data)
+
+      if (data.message === "Doctor registered successfully") {
+        setToastType("default");
+        setResponseMessage(data?.message || "Doctor Registration Successful");
+        console.log("Signup successful:", data);
+      }
+    } catch (error: any) {
+      console.log("Error in sign up --> ", error);
+      setToastType("destructive");
+      setResponseMessage(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
   return (
-    <div className="flex h-screen ">
-      {/* left side */}
-      <div className=" hidden md:inline-block w-[80%]">
+    <div className="flex h-screen relative">
+      {/* Left side image */}
+      <div className="hidden md:inline-block w-[80%]">
         <Image
           src="/Doctor_Image.jpg"
           alt="Doctor"
-          width={900} // arbitrary, won't affect final layout because we use className
+          width={900}
           height={1000}
           className="w-full h-screen object-cover"
         />
       </div>
 
-      {/* right side */}
-
-      <div className="w-full flex flex-col items-center justify-center">
+      {/* Right side form */}
+      <div className="w-full flex flex-col items-center justify-center px-8">
+        {alert}
         <form className="md:w-96 w-80 flex flex-col items-center justify-center">
           <h2 className="text-4xl text-gray-900 font-medium">
             {isSignup ? "Sign up" : "Sign in "} (Doctor)
@@ -63,7 +161,7 @@ function page() {
           </div>
 
           <div className="flex flex-col w-full bg-transparent gap-5">
-            {/* Name Section (shown only on signup) */}
+            {/* Name field */}
             {isSignup && (
               <div className="flex items-center gap-2 h-12 px-3 border border-gray-200 rounded-full">
                 <svg
@@ -81,7 +179,6 @@ function page() {
                     d="M15.232 11.232A3 3 0 1 1 8.768 11.232a3 3 0 0 1 6.464 0zM4.5 20.25a8.25 8.25 0 1 1 15 0"
                   />
                 </svg>
-
                 <input
                   type="text"
                   value={name}
@@ -93,7 +190,7 @@ function page() {
               </div>
             )}
 
-            {/* Email Section */}
+            {/* Email field */}
             <div className="flex items-center gap-2 h-12 px-3 border border-gray-200 rounded-full">
               <svg
                 width="16"
@@ -109,7 +206,6 @@ function page() {
                   fill="#6B7280"
                 />
               </svg>
-
               <input
                 type="email"
                 value={email}
@@ -121,6 +217,7 @@ function page() {
             </div>
           </div>
 
+          {/* Password field */}
           <div className="flex items-center mt-6 w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2">
             <svg
               width="13"
@@ -159,28 +256,30 @@ function page() {
             </p>
           </div>
 
-          {/* Sign in, Sign up button */}
-
+          {/* Submit button */}
           <button
             type="submit"
             onClick={isSignup ? handleSignup : handleLogin}
             className="mt-8 w-full h-11 rounded-full cursor-pointer text-white bg-indigo-500 hover:opacity-90 transition-opacity"
           >
-            {isSignup ? "Create account as Doctor" : "Sign in as Doctor"}
+            {loading
+              ? "Wait .... "
+              : isSignup
+              ? "Create account as Doctor"
+              : "Sign in as Doctor"}
           </button>
+
           <p className="text-gray-800/90 text-sm mt-4 flex gap-2">
             {isSignup ? "Already have an account?" : "Don't have an account?"}
-            <p
+            <span
               className="text-blue-600 hover:underline font-semibold cursor-pointer"
               onClick={() => setIsSignup((prev) => !prev)}
             >
-              {isSignup ? "Sign in " : "Sign up "}
-            </p>
+              {isSignup ? "Sign in" : "Sign up"}
+            </span>
           </p>
         </form>
       </div>
     </div>
   );
 }
-
-export default page;

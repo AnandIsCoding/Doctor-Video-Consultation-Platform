@@ -3,6 +3,11 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import React, { useState } from "react";
 
+const metadata = {
+  title: 'Patient Login - eDoc+',
+  description: 'Sign in to your MediCare+ account to access healthcare consultations.',
+};
+
 function page() {
   const [isSignup, setIsSignup] = useState(true);
   const [showPassword, setShowpassword] = useState(false);
@@ -171,12 +176,12 @@ function page() {
           </button>
           <p className="text-gray-800/90 text-sm mt-4 flex gap-2">
             {isSignup ? "Already have an account?" : "Don't have an account?"}
-            <p
+            <span
               className="text-blue-600 hover:underline font-semibold cursor-pointer"
               onClick={() => setIsSignup((prev) => !prev)}
             >
               {isSignup ? "Sign in" : "Sign up"}
-            </p>
+            </span>
           </p>
         </form>
       </div>

@@ -178,7 +178,7 @@ export const socials = [
     {
       title: "For Healthcare",
       links: [
-        { text: "Join as Doctor", href: "/signup/doctor" },
+        { text: "Join as Doctor", href: "/login/doctor" },
         { text: "Doctor Resources", href: "/doctor-resources" },
       ]
     },
@@ -186,7 +186,7 @@ export const socials = [
       title: "For Patients",
       links: [
         { text: "Find Doctors", href: "/doctors" },
-        { text: "Book Appointment", href: "/signup/patient" },
+        { text: "Book Appointment", href: "/login/patient" },
       ]
     },
     {
@@ -217,7 +217,7 @@ export const contactInfo = [
 
   export const faqs = [
     {
-      question: "How much does a doctor visit with healthCare+ cost?",
+      question: "How much does a doctor visit with eDoc+ cost?",
       answer: "With insurance, you pay your copay based on your plan. We accept most plans, including Medicare. Without insurance, online doctor visits are $129. You can become a MediCare+ member and pay $44/visit. Membership is $55 for three months and $180 for a yearly membership."
     },
     {
@@ -225,7 +225,7 @@ export const contactInfo = [
       answer: "Yes, we accept most major health insurance plans including Medicare, BlueCross BlueShield, Aetna, United Healthcare, Cigna, Humana, and many others. We also accept FSA and HSA payments."
     },
     {
-      question: "What conditions can MediCare+ doctors treat?",
+      question: "What conditions can eDoc+ doctors treat?",
       answer: "Our doctors can treat a wide range of conditions including cold and flu symptoms, allergies, skin conditions, mental health concerns, chronic condition management, and much more through virtual consultations."
     },
     {

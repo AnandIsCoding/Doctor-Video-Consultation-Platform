@@ -2,14 +2,17 @@ import Router from "express";
 import { body } from "express-validator";
 import validate from "../middleware/validator.js";
 import {
+  getProfile,
   googleFailure,
   googleLogin,
   googleLoginCallback,
   loginDoctor,
   loginPatient,
+  logout,
   registerDoctor,
   registerPatient,
 } from "../controllers/auth.controller.js";
+import { authenticate } from "../middleware/auth.middleware.js";
 
 const authRouter = Router();
 
@@ -82,6 +85,12 @@ authRouter.get("/google", googleLogin);
 
 authRouter.get('/google/callback', googleLoginCallback);
 authRouter.get('/google/failure', googleFailure);
+
+
+authRouter.get('/profile', authenticate, getProfile)
+
+
+authRouter.delete('/logout', authenticate, logout)
 
 
 

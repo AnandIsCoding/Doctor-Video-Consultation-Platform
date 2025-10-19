@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal } from "lucide-react";
 import axios from "axios";
+import useStore from "@/store/authStore";
+import { useRouter } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -25,6 +27,8 @@ export default function Page() {
 
   const [toastType, setToastType] = useState<ToastVariant>(null);
   const [responseMessage, setResponseMessage] = useState<string>("");
+  const { setUser, setAuthenticated } = useStore.getState();
+  const router = useRouter()
 
   // 🕒 Auto-hide alert after 3 seconds
   useEffect(() => {
@@ -70,6 +74,8 @@ export default function Page() {
       console.log(data)
 
       if (data.message === "Doctor Login successful") {
+        router.push('/')
+        setUser(data?.doctor)
         setToastType("default");
         setResponseMessage(data?.message || "Doctor Login successful");
         console.log("Doctor Login successful : --> ", data);
@@ -103,7 +109,9 @@ export default function Page() {
       console.log(data)
 
       if (data.message === "Doctor registered successfully") {
+        setUser(data?.doctor)
         setToastType("default");
+        router.push('/')
         setResponseMessage(data?.message || "Doctor Registration Successful");
         console.log("Signup successful:", data);
       }

@@ -51,7 +51,7 @@ export const registerDoctor = async (req, res) => {
     });
     return res
       .status(StatusCodes.CREATED)
-      .json({ message: "Doctor registered successfully", token });
+      .json({ message: "Doctor registered successfully", token, doctor:newDoctor });
   } catch (error) {
     console.log(chalk.red("Error in registerDoctor controller", error));
     return res
@@ -95,7 +95,7 @@ export const loginDoctor = async (req, res) => {
     });
     return res
       .status(StatusCodes.OK)
-      .json({ message: "Doctor Login successful", token });
+      .json({ message: "Doctor Login successful", token , doctor});
   } catch (error) {
     console.log(chalk.red("Error in loginDoctor controller", error));
     return res
@@ -133,7 +133,7 @@ export const registerPatient = async (req, res) => {
             sameSite: "none", // 🔹 allow cross-site cookies
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
-        return res.status(StatusCodes.CREATED).json({message: "Patient registered successfully", token})
+        return res.status(StatusCodes.CREATED).json({message: "Patient registered successfully", token, patient:newPatient})
     } catch (error) {
         console.log(chalk.red("Error in registerPatient controller", error));
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message: "Something went wrong"})
@@ -166,7 +166,7 @@ export const loginPatient = async (req, res) => {
             sameSite: "none", // 🔹 allow cross-site cookies
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
-        return res.status(StatusCodes.OK).json({message: "Login successful", token})
+        return res.status(StatusCodes.OK).json({message: "Login successful", token, patient})
     } catch (error) {
         console.log(chalk.red("Error in loginPatient controller", error));
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({message: "Something went wrong"})
@@ -181,7 +181,7 @@ export const logout = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: true,})
-    return res.status(StatusCodes.OK).json({ message: "Logout successful" });
+    return res.status(StatusCodes.OK).json({ message: "Logged out successfully" });
   } catch (error) {
     console.log(chalk.red("Error in logout controller", error));
     return res
@@ -257,3 +257,44 @@ export const googleFailure = async (req, res) => {
       .json({ message: "Something went wrong" });
   }
 }
+
+// profile
+
+export const getProfile = async (req, res) => {
+  try {
+    const userId = req.user?._id; // ⬅️ Comes from auth middleware (JWT)
+    if (!userId) {
+      return res
+        .status(StatusCodes.UNAUTHORIZED)
+        .json({ success: false, message: 'Unauthorized: No user ID found' });
+    }
+
+    // 1️⃣ Check if the user exists as a patient
+    let user = await Patient.findById(userId).select('-password -googleId');
+    let role = 'patient';
+
+    // 2️⃣ If not found as patient, check Doctor
+    if (!user) {
+      user = await Doctor.findById(userId).select('-password -googleId');
+      role = 'doctor';
+    }
+
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, message: 'User not found' });
+    }
+
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: 'Profile fetched successfully',
+      role,
+      user,
+    });
+  } catch (error) {
+    console.log(chalk.bgRedBright('❌ Error in getProfile controller --->> '), error);
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: 'Something went wrong' });
+  }
+};

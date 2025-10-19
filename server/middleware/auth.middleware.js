@@ -7,35 +7,36 @@ import { JWT_SECRET } from "../configs/server.config.js";
 
 export const authenticate = async (req, res, next) => {
   try {
-    const { token } = req.cookies;
-
-    if (token) {
-      return res.status(401).json({
+    // ✅ First check if cookies exist and token is present
+    if (!req.cookies || !req.cookies.token) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({
         success: false,
         message: "Unauthorized: No token provided",
-        error: "User token missing",
       });
     }
-    const decodedData = jwt.verify(userToken, JWT_SECRET);
-    if (decodedData?.role === "doctor") {
-      const doctor = await Doctor.findById(decoded.id);
-      req.user = doctor;
-    } else if (decodedData?.role === "patient") {
-      const patient = await Patient.findById(decoded.id);
-      req.user = patient;
+
+    const token = req.cookies.token;
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    let user = null;
+
+    if (decoded?.type === "doctor") {
+      user = await Doctor.findById(decoded.id);
+    } else if (decoded?.type === "patient") {
+      user = await Patient.findById(decoded.id);
     }
-    if (!req.user) {
-      console.log(
-        chalk.bgRedBright("Error in assigning req.user in auth middleware"),
-        error
-      );
+
+    if (!user) {
+      console.log(chalk.bgRedBright("Error in assigning req.user in auth middleware user is --> "), user);
       return res
         .status(StatusCodes.UNAUTHORIZED)
-        .json({ success: false, message: "Invalid User details in db" });
+        .json({ success: false, message: "Invalid user details in DB" });
     }
+
+    req.user = user;
     next();
   } catch (error) {
-    console.log(chalk.bgRedBright("Error in auth middleware --> "), error);
+    console.log(chalk.bgRedBright("❌ Error in auth middleware --> "), error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .json({ success: false, message: "Something went wrong !!" });

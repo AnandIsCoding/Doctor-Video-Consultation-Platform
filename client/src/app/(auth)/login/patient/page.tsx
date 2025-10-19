@@ -1,29 +1,27 @@
 "use client";
+import { handlePatientLogin, handlePatientSignup } from "@/api/apiCall";
+import { useToastAlert } from "@/lib/useToastAlert";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const metadata = {
-  title: 'Patient Login - eDoc+',
-  description: 'Sign in to your MediCare+ account to access healthcare consultations.',
+  title: "Patient Login - eDoc+",
+  description:
+    "Sign in to your MediCare+ account to access healthcare consultations.",
 };
 
 function page() {
   const [isSignup, setIsSignup] = useState(true);
   const [showPassword, setShowpassword] = useState(false);
   const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  //   login handler
-  const handleLogin = async () => {
-    console.log("login");
-  };
-  // handle signup
-  const handleSignup = async () => {
-    console.log("Signup");
-    console.log(name, email, password)
-  };
+  const { showToast, Toast } = useToastAlert();
+  const router = useRouter();
+
   return (
     <div className="flex h-screen ">
       {/* left side */}
@@ -91,7 +89,7 @@ function page() {
                 <input
                   type="text"
                   value={name}
-                  onChange={(e)=>setName(e.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="Your Name"
                   className="bg-transparent text-gray-700 placeholder-gray-500 outline-none text-sm w-full"
                   required
@@ -119,7 +117,7 @@ function page() {
               <input
                 type="email"
                 value={email}
-                 onChange={(e)=>setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email ID"
                 className="bg-transparent text-gray-700 placeholder-gray-500 outline-none text-sm w-full"
                 required
@@ -143,7 +141,7 @@ function page() {
             <input
               type={showPassword ? "text" : "password"}
               value={password}
-               onChange={(e)=>setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
               required
@@ -165,15 +163,34 @@ function page() {
             </p>
           </div>
 
-            {/* Sign in, Sign up button */}
+          {/* Sign in, Sign up button */}
 
           <button
-            type="submit"
-            onClick={isSignup ? handleSignup : handleLogin}
+            type="button"
+            onClick={async (e) => {
+              e.preventDefault();
+              if (isSignup) {
+                await handlePatientSignup(
+                  name,
+                  email,
+                  password,
+                  router,
+                  showToast
+                );
+              } else {
+                await handlePatientLogin(
+                  email,
+                  password,
+                  router,
+                  showToast
+                );
+              }
+            }}
             className="mt-8 w-full h-11 rounded-full cursor-pointer text-white bg-indigo-500 hover:opacity-90 transition-opacity"
           >
             {isSignup ? "Create account" : "Sign in"}
           </button>
+
           <p className="text-gray-800/90 text-sm mt-4 flex gap-2">
             {isSignup ? "Already have an account?" : "Don't have an account?"}
             <span

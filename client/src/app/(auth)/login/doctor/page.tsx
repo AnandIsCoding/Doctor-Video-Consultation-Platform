@@ -2,10 +2,18 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import {
+  Eye,
+  EyeClosed,
+  EyeClosedIcon,
+  EyeIcon,
+  EyeOff,
+  Terminal,
+} from "lucide-react";
 import axios from "axios";
 import useStore from "@/store/authStore";
 import { useRouter } from "next/navigation";
+import { callGoogleLoginApi } from "@/api/apiCall";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -18,17 +26,17 @@ const metadata = {
 type ToastVariant = "default" | "destructive" | null | undefined;
 
 export default function Page() {
-  const [isSignup, setIsSignup] = useState(true);
-  const [showPassword, setShowpassword] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isSignup, setIsSignup] = useState<boolean>(true);
+  const [showPassword, setShowpassword] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [toastType, setToastType] = useState<ToastVariant>(null);
   const [responseMessage, setResponseMessage] = useState<string>("");
   const { setUser, setAuthenticated } = useStore.getState();
-  const router = useRouter()
+  const router = useRouter();
 
   // 🕒 Auto-hide alert after 3 seconds
   useEffect(() => {
@@ -44,7 +52,9 @@ export default function Page() {
   const alert = toastType ? (
     <Alert
       variant={toastType ?? "default"}
-      className={`absolute top-4 left-1/2 -translate-x-1/2 w-full px-6  md:mx-8 md:w-fit ${toastType === 'destructive' ? 'bg-red-200' : 'bg-green-300 text-black'} z-50`}
+      className={`absolute top-4 left-1/2 -translate-x-1/2 w-full px-6  md:mx-8 md:w-fit ${
+        toastType === "destructive" ? "bg-red-200" : "bg-green-300 text-black"
+      } z-50`}
     >
       <Terminal />
       <AlertTitle>
@@ -55,27 +65,31 @@ export default function Page() {
   ) : null;
 
   // 🧑‍⚕️ Login handler
-  const handleLogin = async (e:any) => {
+  const handleLogin = async (e: any) => {
     console.log("Doctor login");
     // Implement login logic
-     e.preventDefault();
+    e.preventDefault();
 
     try {
       setResponseMessage("");
       setLoading(true);
 
-      const res = await axios.post(`${BASE_URL}/auth/doctor/login`, {
-        email,
-        password,
-      }, {withCredentials:true});
+      const res = await axios.post(
+        `${BASE_URL}/auth/doctor/login`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
 
       const data = res.data;
 
-      console.log(data)
+      console.log(data);
 
       if (data.message === "Doctor Login successful") {
-        router.push('/')
-        setUser(data?.doctor)
+        router.push("/doctor/dashboard");
+        setUser(data?.doctor);
         setToastType("default");
         setResponseMessage(data?.message || "Doctor Login successful");
         console.log("Doctor Login successful : --> ", data);
@@ -83,7 +97,9 @@ export default function Page() {
     } catch (error: any) {
       console.log("Error in sign in --> ", error);
       setToastType("destructive");
-      setResponseMessage(error.response?.data?.message || error.message || 'SOmething went wrong');
+      setResponseMessage(
+        error.response?.data?.message || error.message || "SOmething went wrong"
+      );
     } finally {
       setLoading(false);
     }
@@ -98,20 +114,24 @@ export default function Page() {
       setResponseMessage("");
       setLoading(true);
 
-      const res = await axios.post(`${BASE_URL}/auth/doctor/register`, {
-        name,
-        email,
-        password,
-      }, {withCredentials:true});
+      const res = await axios.post(
+        `${BASE_URL}/auth/doctor/register`,
+        {
+          name,
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
 
       const data = res.data;
 
-      console.log(data)
+      console.log(data);
 
       if (data.message === "Doctor registered successfully") {
-        setUser(data?.doctor)
+        setUser(data?.doctor);
         setToastType("default");
-        router.push('/')
+        router.push("/doctor/dashboard");
         setResponseMessage(data?.message || "Doctor Registration Successful");
         console.log("Signup successful:", data);
       }
@@ -152,6 +172,7 @@ export default function Page() {
 
           <button
             type="button"
+            onClick={() => callGoogleLoginApi("doctor")}
             className="w-full mt-8 bg-gray-500/10 flex items-center justify-center h-12 rounded-full"
           >
             <img
@@ -239,14 +260,24 @@ export default function Page() {
                 fill="#6B7280"
               />
             </svg>
-            <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full"
-              required
-            />
+            <div className="relative w-full">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-11 pr-10 pl-3  rounded-md"
+                required
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowpassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 cursor-pointer -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           <div className="w-full flex items-center justify-between mt-8 text-gray-500/80">
@@ -256,12 +287,6 @@ export default function Page() {
                 Remember me
               </label>
             </div>
-            <p
-              onClick={() => setShowpassword((prev) => !prev)}
-              className="text-sm underline text-blue-400 cursor-pointer"
-            >
-              {showPassword ? "Hide Password" : "Show Password"}
-            </p>
           </div>
 
           {/* Submit button */}

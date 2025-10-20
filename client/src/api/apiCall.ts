@@ -1,3 +1,5 @@
+// approx all api calls will be done here 
+
 import useStore from "@/store/authStore";
 import axios from "axios";
 
@@ -7,7 +9,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 // define type for showToast
 export type ShowToastFn = (type: "success" | "destructive" | "default", message: string) => void;
 
-// ✅ Get Profile
+// ✅ Get Profile api call
 export const getProfile = async (showToast?: ShowToastFn) => {
   const { setUser, setAuthenticated } = useStore.getState();
 
@@ -32,7 +34,7 @@ export const getProfile = async (showToast?: ShowToastFn) => {
   }
 };
 
-// ✅ Logout User
+// ✅ Logout User api call
 export const logoutUser = async (router: any, showToast?: ShowToastFn) => {
   const { setUser, setAuthenticated } = useStore.getState();
 
@@ -60,7 +62,7 @@ export const logoutUser = async (router: any, showToast?: ShowToastFn) => {
 
 
 
-//  patient signup ⭐⭐
+//  patient signup api call ⭐⭐
 
 export const handlePatientSignup = async ( name: string, email: string, password: string, router: any, showToast?: ShowToastFn) => {
 
@@ -73,7 +75,7 @@ export const handlePatientSignup = async ( name: string, email: string, password
       setUser(data.patient)
       setAuthenticated(true)
       showToast?.("success", "✅ User Registered successfully");
-      router.push("/");
+      router.push("/patient/dashboard");
     } else {
       showToast?.("destructive", `⚠️ ${data?.message}` || 'Something went wrong ');
     }
@@ -88,12 +90,11 @@ export const handlePatientSignup = async ( name: string, email: string, password
 
 
 
-//  patient login
+//  patient login api call ⭐⭐
 
 export const handlePatientLogin = async ( email: string, password: string, router: any, showToast?: ShowToastFn) => {
-
   const { setUser, setAuthenticated } = useStore.getState();
-  console.log("Doctor Signin");
+  console.log("Doctor sign in");
   try {
     const res = await axios.post(`${BASE_URL}/auth/patient/login`, { name, email, password }, { withCredentials: true })
     const data = await res.data
@@ -101,7 +102,7 @@ export const handlePatientLogin = async ( email: string, password: string, route
       setUser(data.patient)
       setAuthenticated(true)
       showToast?.("success", "✅ Login successful");
-      router.push("/");
+      router.push("/patient/dashboard");
     } else {
       showToast?.("destructive", `⚠️ ${data?.message}` || 'Something went wrong ');
     }
@@ -114,3 +115,15 @@ export const handlePatientLogin = async ( email: string, password: string, route
   }
 };
 
+
+
+//  handle Google login 
+
+export const callGoogleLoginApi = async(role:string) =>{
+  console.log('google login api')
+  try {
+     window.location.href = `${BASE_URL}/auth/google?role=${role}`
+  } catch (error) {
+    
+  }
+} 

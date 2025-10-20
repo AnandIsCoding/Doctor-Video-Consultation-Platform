@@ -196,7 +196,7 @@ export const logout = async (req, res) => {
 
 export const googleLogin = async (req, res, next) => {
   try {
-    const userType = req.query.role || "patient"; // 'doctor' or 'patient'
+    const userType = req.query.state || req.query.role || "patient"; // 'doctor' or 'patient'
     if (!userType || (userType !== "doctor" && userType !== "patient")) {
       return res.status(StatusCodes.BAD_REQUEST).json({ message: "Invalid user type" });
     }

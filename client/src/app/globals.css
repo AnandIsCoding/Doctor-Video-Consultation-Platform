@@ -136,3 +136,28 @@
   background-size: 200% 200%;
   animation: gradient-x 4s ease infinite;
 }
+
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;                /* 👈 Thin width */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;   /* 👈 Transparent track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3b82f6; /* 👈 Tailwind blue-500 */
+  border-radius: 9999px;     /* 👈 Fully rounded */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #2563eb; /* 👈 Darker blue on hover (blue-600) */
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3b82f6 transparent;
+}

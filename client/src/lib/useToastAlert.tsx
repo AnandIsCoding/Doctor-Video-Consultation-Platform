@@ -14,7 +14,7 @@ export const useToastAlert = () => {
       setTimeout(() => {
         setToastType(null);
         setToastMessage("");
-      }, 3000); // Auto close after 3 seconds
+      }, 6000); // Auto close after 3 seconds
     },
     []
   );

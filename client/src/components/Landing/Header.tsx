@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProp> = ({ showDashboardNav }) => {
   const pathname = usePathname();
   const { authenticated, user } = useStore();
 
-  const isAuthenticated = authenticated;
+  const isAuthenticated:boolean = authenticated;
 
   const getDashboardData = (): navItems[] => {
     if (user?.role === "doctor") {
@@ -129,7 +129,7 @@ const Header: React.FC<HeaderProp> = ({ showDashboardNav }) => {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="flex gap-4 items-center px-2 hover:bg-gray-100 transition-colors cursor-pointer"
+                  className="flex gap-4 items-center px-2  transition-colors cursor-pointer"
                 >
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={user?.profilePic} alt={user?.name} />
@@ -157,13 +157,19 @@ const Header: React.FC<HeaderProp> = ({ showDashboardNav }) => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
-                  <Link href={`/${user?.role}/profile`} className="w-full">
+                  <Link
+                    href={`/${user?.role}/profile`}
+                    className="w-full cursor-pointer"
+                  >
                     Profile
                   </Link>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem asChild>
-                  <Link href={`/${user?.role}/settings`} className="w-full">
+                  <Link
+                    href={`/${user?.role}/settings`}
+                    className="w-full cursor-pointer"
+                  >
                     Settings
                   </Link>
                 </DropdownMenuItem>
@@ -171,22 +177,22 @@ const Header: React.FC<HeaderProp> = ({ showDashboardNav }) => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
-                  <h1
+                  <span
                     onClick={async () => {
                       await logoutUser(router, showToast);
                     }}
-                    className="w-full cursor-pointer bg-red-400 hover:bg-black text-white transition-colors"
+                    className="w-full cursor-pointer bg-red-500  text-white hover:bg-red-600"
                   >
                     Logout
-                  </h1>
+                  </span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
 
                 <HoverCard>
                   <HoverCardTrigger asChild>
-                    <div className="text-sm text-center text-blue-600 bg-blue-50 py-2 px-3 mt-1 rounded-md cursor-pointer truncate hover:bg-blue-100 transition">
-                      {user?.email || "No email available"}
+                    <div className="text-sm  text-white bg-blue-500 py-2 px-3 mt-1 rounded-md cursor-pointer truncate transition">
+                      {user?.email || "Unable to find email"}
                     </div>
                   </HoverCardTrigger>
                   <HoverCardContent className="text-sm text-gray-600">
@@ -201,8 +207,8 @@ const Header: React.FC<HeaderProp> = ({ showDashboardNav }) => {
           <div className="flex items-center space-x-3">
             {isAuthenticated && user ? (
               <div className="flex items-center space-x-4">
-                <span className="hidden md:block text-sm text-gray-700 font-medium whitespace-nowrap">
-                  Welcome,&nbsp;{user?.name}
+                <span className="block text-sm text-gray-700 font-medium whitespace-nowrap">
+                  Welcome ji iiiii,&nbsp;{user?.name}
                 </span>
                 <Link href={`/${user?.role}/dashboard`}>
                   <Button

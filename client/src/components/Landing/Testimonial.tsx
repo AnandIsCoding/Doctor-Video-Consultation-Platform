@@ -113,7 +113,7 @@ export default function Testimonial() {
         <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
 
         <div className="marquee-inner flex min-w-[200%] pt-10 pb-5">
-          {[...testimonials, ...testimonials].map((card, i) => (
+          {[...testimonials, ...testimonials].map((card:any, i) => (
             <CreateCard key={`row1-${i}`} card={card} />
           ))}
         </div>
@@ -126,7 +126,7 @@ export default function Testimonial() {
         <div className="absolute left-0 top-0 h-full w-20 z-10 pointer-events-none bg-gradient-to-r from-white to-transparent"></div>
 
         <div className="marquee-inner marquee-reverse flex min-w-[200%] pt-10 pb-5">
-          {[...testimonials, ...testimonials].map((card, i) => (
+          {[...testimonials, ...testimonials].map((card:any, i) => (
             <CreateCard key={`row2-${i}`} card={card} />
           ))}
         </div>
